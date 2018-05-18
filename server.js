@@ -85,10 +85,12 @@ io.sockets.on('connection', function(socket){
         // New note added, push to all sockets and insert into db
         console.log(data);
         io.sockets.emit('delete factory', data)
+       
         // Use node's db injection format to filter incoming data
         db.query('DELETE FROM factories WHERE id="' + data.factoryid +'"')
 	db.query('DELETE FROM children WHERE factory_id="' + data.factoryid +'"')
-    })
+        
+})
 
     // intial factories
     if (! isInitFactories) {

@@ -1,0 +1,107 @@
+body {
+    margin: 15px;
+}
+.navbar {
+    margin: 0 !important;
+    width: 100%;
+    font-size: 25px;
+    font-family: 'Pacifico', cursive;
+    border-radius: 2%;
+    color: #ffff !important;
+    background-color: #42c2f4 !important;
+    padding-left: 5%;
+}
+
+h1, h2, h3, h4, h5, h6, p, div {
+    font-family: 'Dosis', sans-serif;
+}
+.create {
+    margin-top: 15px;
+    border: 5px solid #42c2f4;
+    padding: 5%;
+    margin-bottom: 15px;
+}
+input {
+    width: 200px;
+}
+#newFactName {
+    margin-left: 29px;
+}
+#newFactMin {
+    margin-left: 12px; 
+}
+#newFactMax {
+    margin-left: 10px;
+}
+.create button {
+   background-color: #42c2f4;
+   font-family: 'Pacifico', cursive;
+   padding: 5px;
+   width: 75px;
+   margin-top: 15px;
+}
+
+.createfield{
+    margin-bottom: 0px;
+    display: inline-block;
+    width: 100%;
+}
+
+.deletefactory {
+    background-color: #d61711;
+    color: #ffff;
+    font-family: 'Pacifico', cursive;
+    padding: 5px;
+    width: 145px;
+    margin-top: 15px;
+    font-size: 12px;
+    margin-left: 20px;
+}
+.factoryName {
+    font-family: 'Pacifico', cursive;
+    display: inline-block;
+    margin-right: 20px;
+    margin-top: 35px;
+    cursor: pointer;
+}
+.newChild {
+    display: inline-block;
+    color: #42c2f4; 
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+ul#factories, ul#factories ul {
+    list-style: none;
+     margin: 0;
+     padding: 0;
+   } 
+   ul#factories ul {
+     margin-left: 10px;
+   }
+   ul#factories li {
+     margin: 0;
+     padding: 0 7px;
+     line-height: 20px;
+     color: #369;
+     font-weight: bold;
+     border-left:1px solid rgb(100,100,100);
+
+   }
+   ul#factories li:last-child {
+       border-left:none;
+   }
+   ul#factories li:before {
+      position:relative;
+      top:-0.3em;
+      height:1em;
+      width:12px;
+      color:white;
+      border-bottom:1px solid rgb(100,100,100);
+      content:"";
+      display:inline-block;
+      left:-7px;
+   }
+   ul#factories li:last-child:before {
+      border-left:1px solid rgb(100,100,100);   
+   }

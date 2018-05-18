@@ -1,214 +1,233 @@
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="http://localhost:3000/socket.io/socket.io.js"></script>
-<script>
-$(document).ready(function(){
-    // Connect to our node/websockets server
-    var socket = io.connect('http://localhost:3000'); 
+<html>
+    <head>
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+            <link rel="stylesheet" href="style.css">
+            <link href="https://fonts.googleapis.com/css?family=Dosis|Pacifico|Poiret+One" rel="stylesheet">
 
-    // -------------------- Initial set of children, loop through and add to list
-    /*socket.on('initial notes', function(data){
-	console.log(data);
-        var html = ''
-        for (var i = 0; i < data.length; i++){
-            // We store html as a var then add to DOM after for efficiency
-            html += '<li>' + data[i].number + '</li>'
-        }
-        $('#notes').html(html)
-    })*/
-    // ---------------------- Initial set of factories, loop through and add to list
-    socket.on('initial factories', function(data){
-        console.log(data);
-        var html = ''
-        for (var i = 0; i < data.length; i++){
-            // We store html as a var then add to DOM after for efficiency
-            html += '<li id="factlist' +data[i].id+ '">' +
-		'<div data-del="' +data[i].id+ '" class="deleteFactory">' + "DELETE FACTORY BELOW</div>" +
-		'<div id="' +data[i].id+ '" class="factoryName">' + data[i].factory_name +"</div>" + 
-		'<div class="newChild" data-factid="' +data[i].id+ '" ' + 'data-min="' +data[i].min+ '" ' + 'data-max="' +data[i].max+ '">Create a new note</div>' +  
-		'<ul id="factNum' + data[i].id + '"></ul>' +'</li>';
-        }
-        $('#factories').html(html)
+    </head>
+    <body>
+        <nav class="navbar navbar-light bg-light">Root Node </nav>
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+        <script>
+        $(document).ready(function(){
+            // Connect to our node/websockets server
+            var socket = io.connect('http://localhost:3000'); 
 
-    	// ------------------------- Add a new (random) child
-    	$('.newChild').click(function(){
-		var isNumber = /^\d+$/;
-		var howMany = prompt("how many children?", 1);
-		howMany = parseInt(howMany);
-		if( isNumber.test(howMany) && howMany <= 15 ){
-		for (i = 0; i < howMany; i++) { 
-        		console.log("click");
-        		var fid = $(this).attr("data-factid");
-			var min = $(this).attr("data-min");
-			var max = $(this).attr("data-max");
-			fid = parseInt(fid)
-			min = parseInt(min);
-			max = parseInt(max);
-        		var newChildNumber = Math.floor(Math.random() * (max - min + 1)) + min;;
-			console.log("number: " + newChildNumber);
-        		socket.emit('new child', {number: newChildNumber, factoryid: fid})
-		}
-		} else {
-			alert("sorry max is 15");
-		}
-    	});
+            // -------------------- Initial set of children, loop through and add to list
+            /*socket.on('initial notes', function(data){
+            console.log(data);
+                var html = ''
+                for (var i = 0; i < data.length; i++){
+                    // We store html as a var then add to DOM after for efficiency
+                    html += '<li>' + data[i].number + '</li>'
+                }
+                $('#notes').html(html)
+            })*/
+            // ---------------------- Initial set of factories, loop through and add to list
+            socket.on('initial factories', function(data){
+                console.log(data);
+                var html = ''
+                for (var i = 0; i < data.length; i++){
+                    // We store html as a var then add to DOM after for efficiency
+                    html += '<li id="factlist' +data[i].id+ '">' +
+                
+                '<div id="' +data[i].id+ '" class="factoryName">' + data[i].factory_name +"</div>" + 
+                '<div class="newChild" data-factid="' +data[i].id+ '" ' + 'data-min="' +data[i].min+ '" ' + 'data-max="' +data[i].max+ '">Create a new note</div>' +  
+                '<ul id="factNum' + data[i].id + '"></ul>' +
+                '<button data-del="' +data[i].id+ '" class="deleteFactory">' + "Delete this Factory</button>" +'</li>';
+                }
+                $('#factories').html(html)
 
-        // ------------------------- Add a new (random) child
-        $('.deleteFactory').click(function(){
-                console.log("click");
-                var fid = $(this).attr("data-del");
-                fid = parseInt(fid)
-                socket.emit('delete factory', {factoryid: fid})
-        });
-
-        // ------------------------- Add a new (random) child
-        $('.factoryName').click(function(){
-                console.log("click fact name");
-		console.log( $(this).attr("id"));
-		var factid = $(this).attr("id");
-		var name = prompt("Please enter a new factory name", $(this).text() );
-		console.log(name);
-		if(name !== null && name !== undefined && name !== ""){
-                	socket.emit('rename factory', {newname: name, fid: factid})
-		}
-        });
-
-    })//END INITIAL FACTORIES
-
-   // -------------------- Initial set of children, loop through and add to list
-    socket.on('initial notes', function(data){
-        console.log(data);
-        var html = ''
-        for (var i = 0; i < data.length; i++){
-            // We store html as a var then add to DOM after for efficiency
-            html = '<li>' + data[i].number + '</li>'
-	    $('#factNum'+data[i].factory_id).append(html) 
-       }
-    })
-
-    // ----------------------- New children emitted, add it to our list of current children
-    socket.on('new child', function(data){
-	console.log(data);
-        $('#factNum'+ data.factoryid).append('<li>' + data.number + '</li>')
-    })
-
-    // ----------------------- RENAME FACTORY, add it to our list of current children
-    socket.on('rename factory', function(data){
-        console.log(data);
-        $('#'+ data.fid).html(data.newname)
-    })
-
-    // ----------------------- DELETE FACTORY, add it to our list of current children
-    socket.on('delete factory', function(data){
-        console.log(data);
-        $('#factlist'+ data.factoryid).remove()
-    })
-
-    // ----------------------- New FACTORY, add it to our list of current children
-    socket.on('new factory', function(data){
-        console.log(data);
-        var html = ''
-            // We store html as a var then add to DOM after for efficiency
-            html += '<li id="factlist' +data.id+ '">' +
-		'<div data-del="' +data.id+ '" class="deleteFactory">' + "DELETE FACTORY BELOW</div>" +
-                '<div id="' +data.id+ '" class="factoryName">' + data.name +"</div>" +
-                '<div class="newChild" data-factid="' +data.id+ '" ' + 'data-min="' +data.min+ '" ' + 'data-max="' +data.max+ '">Create a new note</div>' +
-                '<ul id="factNum' + data.id + '"></ul>' +'</li>';
-	$('#factories').append(html)
-
-	//-----add children
-        $('.newChild').click(function(){
-		var isNumber = /^\d+$/;
+                // ------------------------- Add a new (random) child
+                $('.newChild').click(function(){
+                var isNumber = /^\d+$/;
                 var howMany = prompt("how many children?", 1);
                 howMany = parseInt(howMany);
-                if( isNumber.test(howMany) && howMany <= 15){
-                for (i = 0; i < howMany; i++) {
-                	console.log("click");
-                	var fid = $(this).attr("data-factid");
-                	var min = $(this).attr("data-min");
-                	var max = $(this).attr("data-max");
-                	fix = parseInt(fid)
-                	min = parseInt(min);
-                	max = parseInt(max);
-                	var newChildNumber = Math.floor(Math.random() * (max - min + 1)) + min;;
-                	console.log("number: " + newChildNumber);
-                	socket.emit('new child', {number: newChildNumber, factoryid: fid})
-		}
-		} else {
-			alert("sorry max is 15");
-		}
-        });
+                if( isNumber.test(howMany) && howMany <= 15 ){
+                for (i = 0; i < howMany; i++) { 
+                        console.log("click");
+                        var fid = $(this).attr("data-factid");
+                    var min = $(this).attr("data-min");
+                    var max = $(this).attr("data-max");
+                    fid = parseInt(fid)
+                    min = parseInt(min);
+                    max = parseInt(max);
+                        var newChildNumber = Math.floor(Math.random() * (max - min + 1)) + min;;
+                    console.log("number: " + newChildNumber);
+                        socket.emit('new child', {number: newChildNumber, factoryid: fid})
+                }
+                } else {
+                    alert("sorry max is 15");
+                }
+                });
 
-        // ---- delete factory
-        $('.deleteFactory').click(function(){
-                console.log("click");
-                var fid = $(this).attr("data-del");
-                fid = parseInt(fid)
-                socket.emit('delete factory', {factoryid: fid})
-        });
-
-
-    })
-
-   // ------------------------- CREATE NEW FACTORY, emit to server to let others know
-    $('#createFactory').click(function(){
-	var fname = $("#newFactName").val();
-	var fmin = $("#newFactMin").val();
-	var fmax = $("#newFactMax").val();
-	fmin = parseInt(fmin);
-	fmax = parseInt(fmax);
-	var isNumber = /^\d+$/;
-
-	if(fname.length > 0){
-		if( isNumber.test(fmin) ){
-			if( isNumber.test(fmax) ){
-				if(fmax > fmin){
-					socket.emit('new factory', {name: fname, min: fmin, max: fmax})
-				} else {
-					alert("please make sure your max is more than your min dummy");
-				}		
-			} else {
-				alert("invalid maximum, please use a number");
-			}
-		} else {
-			alert("invalid minimum, please use a number");
-		}
-	} else {
-		alert("invalid factory name");
-	}
-    });
- 
-    //New socket connected, display new count on page
-    socket.on('users connected', function(data){
-        $('#usersConnected').html('Users connected: ' + data)
-    })
- 
-
-    // New note emitted, add it to our list of current children
-    socket.on('new note', function(data){
-        $('#notes').append('<li>' + data.number + '</li>')
-    })
-
-    // Add a new (random) child, emit to server to let others know
-    $('#newNote').click(function(){
-        var newNote = (Math.floor(Math.random() * 100) + 1)
-        socket.emit('new note', {number: newNote})
-    });
-
-})
-</script>
-
-<h3>create new factory yo!</h3>
-factory name: <input id="newFactName" type="text" /><br>
-min: <input id="newFactMin" type="text" /><br>
-max: <input id="newFactMax" type="text" /><br>
-<div id="createFactory">Do It!!!!!!!</div>
-
-
-<ul id="factories"></ul>
+                // ------------------------- Add a new (random) child
+                $('.deleteFactory').click(function(){
+                        console.log("click");
+                        var fid = $(this).attr("data-del");
+                        fid = parseInt(fid)
+                        socket.emit('delete factory', {factoryid: fid})
+                        
+                });
 
 
 
-<!-- test stuff -->
-<ul id="notes"></ul>
-<div id="usersConnected"></div>
-<div id="newNote">Create a new note</div>
+                // ------------------------- Add a new (random) child
+                $('.factoryName').click(function(){
+                        console.log("click fact name");
+                console.log( $(this).attr("id"));
+                var factid = $(this).attr("id");
+                var name = prompt("Please enter a new factory name", $(this).text() );
+                console.log(name);
+                if(name !== null && name !== undefined && name !== ""){
+                            socket.emit('rename factory', {newname: name, fid: factid})
+                }
+                });
+
+            })//END INITIAL FACTORIES
+
+        // -------------------- Initial set of children, loop through and add to list
+            socket.on('initial notes', function(data){
+                console.log(data);
+                var html = ''
+                for (var i = 0; i < data.length; i++){
+                    // We store html as a var then add to DOM after for efficiency
+                    html = '<li>' + data[i].number + '</li>'
+                $('#factNum'+data[i].factory_id).append(html) 
+            }
+            })
+
+            // ----------------------- New children emitted, add it to our list of current children
+            socket.on('new child', function(data){
+            console.log(data);
+                $('#factNum'+ data.factoryid).append('<li>' + data.number + '</li>')
+            })
+
+            // ----------------------- RENAME FACTORY, add it to our list of current children
+            socket.on('rename factory', function(data){
+                console.log(data);
+                $('#'+ data.fid).html(data.newname)
+            })
+
+            // ----------------------- DELETE FACTORY, add it to our list of current children
+            socket.on('delete factory', function(data){
+                console.log(data);
+                $('#factlist'+ data.factoryid).remove()
+                
+            })
+
+            // ----------------------- New FACTORY, add it to our list of current children
+            socket.on('new factory', function(data){
+                console.log(data);
+                var html = ''
+                    // We store html as a var then add to DOM after for efficiency
+                    html += 
+                        
+                        '<li id="factlist' +data.id+ '">' +
+                        '<div id="' +data.id+ '" class="factoryName">' + data.name +"</div>" +
+                        '<div class="newChild" data-factid="' +data.id+ '" ' + 'data-min="' +data.min+ '" ' + 'data-max="' +data.max+ '">Create a new note</div>' +
+                        '<ul id="factNum' + data.id + '"></ul>' +
+                        '<button data-del="' +data.id+ '" class="deleteFactory">' + "DELETE FACTORY</button>" +'</li>';
+            $('#factories').append(html)
+
+            //-----add children
+                $('.newChild').click(function(){
+                var isNumber = /^\d+$/;
+                        var howMany = prompt("how many children?", 1);
+                        howMany = parseInt(howMany);
+                        if( isNumber.test(howMany) && howMany <= 15){
+                        for (i = 0; i < howMany; i++) {
+                            console.log("click");
+                            var fid = $(this).attr("data-factid");
+                            var min = $(this).attr("data-min");
+                            var max = $(this).attr("data-max");
+                            fix = parseInt(fid)
+                            min = parseInt(min);
+                            max = parseInt(max);
+                            var newChildNumber = Math.floor(Math.random() * (max - min + 1)) + min;;
+                            console.log("number: " + newChildNumber);
+                            socket.emit('new child', {number: newChildNumber, factoryid: fid})
+                }
+                } else {
+                    alert("sorry max is 15");
+                }
+                });
+
+                // ---- delete factory
+                $('.deleteFactory').click(function(){
+                        console.log("click");
+                        var fid = $(this).attr("data-del");
+                        fid = parseInt(fid)
+                        socket.emit('delete factory', {factoryid: fid})
+                        
+                    });
+                
+
+            })
+
+        // ------------------------- CREATE NEW FACTORY, emit to server to let others know
+            $('#createFactory').click(function(){
+            var fname = $("#newFactName").val();
+            var fmin = $("#newFactMin").val();
+            var fmax = $("#newFactMax").val();
+            fmin = parseInt(fmin);
+            fmax = parseInt(fmax);
+            var isNumber = /^\d+$/;
+
+            if(fname.length > 0){
+                if( isNumber.test(fmin) ){
+                    if( isNumber.test(fmax) ){
+                        if(fmax > fmin){
+                            socket.emit('new factory', {name: fname, min: fmin, max: fmax})
+                        } else {
+                            alert("please make sure your max is more than your min!");
+                        }		
+                    } else {
+                        alert("invalid maximum, please use a number");
+                    }
+                } else {
+                    alert("invalid minimum, please use a number");
+                }
+            } else {
+                alert("invalid factory name");
+            }
+            });
+        
+            //New socket connected, display new count on page
+            socket.on('users connected', function(data){
+                $('#usersConnected').html('Users connected: ' + data)
+            })
+        
+
+            // New note emitted, add it to our list of current children
+            socket.on('new note', function(data){
+                $('#notes').append('<li>' + data.number + '</li>')
+            })
+
+            // Add a new (random) child, emit to server to let others know
+            $('#newNote').click(function(){
+                var newNote = (Math.floor(Math.random() * 100) + 1)
+                socket.emit('new note', {number: newNote})
+            });
+
+        })
+        </script>
+        <div class="create">
+            <h3 class="createheading">Create A New Factory</h3>
+            <p class="createfield">factory name:  <input id="newFactName" type="text" /></p><br>
+            <p class="createfield">minimum range: <input id="newFactMin" type="text" /></p><br>
+            <p class="createfield">maximum range: <input id="newFactMax" type="text" /></p><br>
+            <button id="createFactory">Create</button>
+        </div>
+
+        <ul id="factories"></ul>
+
+
+
+        <!-- test stuff -->
+        <ul id="notes"></ul>
+        <div id="usersConnected"></div>
+        <!-- <div id="newNote">Create a new note</div> -->
+        </body>
+</html>
