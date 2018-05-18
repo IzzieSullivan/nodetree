@@ -145,3 +145,7 @@ io.sockets.on('connection', function(socket){
 
 
 })
+
+app.listen(port, function() {
+    console.log('Our app is running on http://localhost:' + port);
+});
