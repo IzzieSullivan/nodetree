@@ -5,7 +5,7 @@ var io = require('socket.io').listen(3000)
 var db = mysql.createConnection({
     host: 'us-cdbr-iron-east-04.cleardb.net',
     user: 'b9e032f3a3822b',
-    database: 'local instance 3306'
+    database: 'heroku_81aadd7208b52bb'
 })
  
 // Log any errors connected to the db
