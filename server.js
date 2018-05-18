@@ -3,9 +3,9 @@ var mysql = require('mysql')
 var io = require('socket.io').listen(3000)
 // Define our db creds
 var db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    database: 'passport'
+    host: 'us-cdbr-iron-east-04.cleardb.net',
+    user: 'b9e032f3a3822b',
+    database: 'local instance 3306'
 })
  
 // Log any errors connected to the db
