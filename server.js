@@ -1,24 +1,11 @@
-var express = require('express');
-var app = express();
-
-// set the port of our application
-// process.env.PORT lets the port be set by Heroku
-var port = process.env.PORT || 3000;
-
 var mysql = require('mysql')
 // Let’s make node/socketio listen on port 3000
-var io = require('socket.io')
-var path = require('path')
-
-app.get('/', (req, res, next) => res.sendFile(path.join(__dirname, 'index.html')) ) ;
-
-
+var io = require('socket.io').listen(3000)
 // Define our db creds
 var db = mysql.createConnection({
-    host: 'us-cdbr-iron-east-04.cleardb.net',
-    user: 'b9e032f3a3822b',
-    password: '95eaea15',
-    database: 'heroku_81aadd7208b52bb'
+    host: 'localhost',
+    user: 'root',
+    database: 'passport'
 })
  
 // Log any errors connected to the db
@@ -145,7 +132,3 @@ io.sockets.on('connection', function(socket){
 
 
 })
-
-app.listen(port, function() {
-    console.log('Our app is running on http://localhost:' + port);
-});
